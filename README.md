@@ -15,4 +15,4 @@ This app open web page, dialer and share text by using implicit intent. And send
 
 ## APK 
 [https://github.com/gauri547/Intents-Playground](https://github.com/gauri547/Intents-Playground)
-
+[https://github.com/gauri547/Intents-Playground/releases](https://github.com/gauri547/Intents-Playground/releases)
