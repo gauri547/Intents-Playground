@@ -13,5 +13,4 @@ This app open web page, dialer and share text by using implicit intent. And send
 
 
 
-## APK
-[APK](](https://github.com/imAtulSharma/Sending-Objects/releases/download/v1.0/app-debug.apk)
+
