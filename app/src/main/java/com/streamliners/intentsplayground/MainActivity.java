@@ -12,157 +12,120 @@ import android.widget.Toast;
 import com.streamliners.intentsplayground.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-
-
-    ActivityMainBinding b;
-    int qty = 0;
-    private int minValue, maxValue;
-    SharedPreferences sharedPreferences;
+    private int qty = 0;
+    private ActivityMainBinding b;
+    private int minVal, maxVal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Initialise
+
+
+        // Initializing the binding
+        // To create layout using layout inflater
         b = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(b.getRoot());
 
-        sharedPreferences = getPreferences(MODE_PRIVATE);
+        setupEventHandlers();
+        getInitialCount();
 
-        //event handler
-        eventHandler();
-        //Receive data
-        receiveData();
-
-        //send data back
-        sendDataBack();
-
-        saveData(savedInstanceState);
-
-    }
-
-    /**
-     * Save data in sharedPreference and savedInstanceState
-     *
-     * @param savedInstanceState Data save on configuration changes
-     */
-    private void saveData(Bundle savedInstanceState) {
-        //check bundle
+        // Restore on saved instances
         if (savedInstanceState != null) {
-            qty = savedInstanceState.getInt(Const.COUNT_VAlUE);
-        } else {
-            qty = sharedPreferences.getInt(Const.COUNT_VAlUE, 0);
+            qty = savedInstanceState.getInt(Const.COUNT, 0);
+            // Update the UI
+            b.qty.setText(String.valueOf(qty));
         }
-
-        b.qty.setText(qty + "");
-    }
-
-
-    /**
-     * Send data back to IntentPlayground Activity
-     */
-    private void sendDataBack() {
-        //click event handler
-        b.btnSendBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                //Check quantity
-                if (qty >= minValue && qty <= maxValue) {
-                    //Send data back
-                    Intent replyIntent = new Intent(MainActivity.this, IntentPlaygroundActivity.class);
-                    replyIntent.putExtra(Const.FINAL_DATA, qty);
-
-                    setResult(RESULT_OK, replyIntent);
-                    finish();
-                } else {
-                    Toast.makeText(MainActivity.this, "NOT VALID", Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        });
-
     }
 
     /**
-     * Receive data from IntentPlayground Activity
+     * Get the data from the starter activity
      */
-    private void receiveData() {
+    private void getInitialCount() {
+        Bundle bundle = getIntent().getExtras();
 
-        // check bundle is not null
-        if (getIntent().getExtras() == null) {
-            sharedPreferences.edit().putInt(Const.COUNT_VAlUE, 0).apply();
+        if (bundle == null)
             return;
+
+        // Getting all the data which is come from the starter activity
+        qty = bundle.getInt(Const.INITIAL_COUNT_KEY, 0);
+        minVal = bundle.getInt(Const.MINIMUM_VALUE, Integer.MIN_VALUE);
+        maxVal = bundle.getInt(Const.MAXIMUM_VALUE, Integer.MAX_VALUE);
+
+        if(qty != 0) {
+            b.sendBackButton.setVisibility(View.VISIBLE);
         }
-        minValue = getIntent().getExtras().getInt(Const.MIN_VALUE, 0);
-        maxValue = getIntent().getExtras().getInt(Const.MAX_VALUE, 0);
 
-        qty = getIntent().getExtras().getInt(Const.INITIAL_DATA, Integer.MIN_VALUE);
-
-
-        b.btnSendBack.setVisibility(View.VISIBLE);
-
-
-        //Edit sharedPreferences
-        sharedPreferences.edit().putInt(Const.COUNT_VAlUE, qty).apply();
+        b.qty.setText(String.valueOf(qty));
     }
 
     /**
      * Trigger Event handlers to listen the actions
      */
-    private void eventHandler() {
-        //click event handler on Decrease button
-        b.decBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                decreaseQuantity();
-            }
-        });
-        //click event handler on Increase
+    private void setupEventHandlers() {
+        // Listening action od clicking on increase button
         b.incBtn.setOnClickListener(new View.OnClickListener() {
             @Override
+            // Task should be done on click on the button view
             public void onClick(View v) {
-                increaseQuantity();
+                // Calling increase function
+                incQty();
+            }
+        });
+
+        // Listening action od clicking on decrease button
+        b.decBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            // Task should be done on click on the button view
+            public void onClick(View v) {
+                // Calling decrease function
+                decQty();
             }
         });
     }
 
     /**
-     * To increase the quantity
+     * To decrease the quantity and update the result in Text View
      */
-    private void increaseQuantity() {
-        //update Quantity TextView
-        b.qty.setText(++qty + "");
-    }
-
-    /**
-     * To decrease the quantity
-     */
-    private void decreaseQuantity() {
-        // check quantity
-        if (qty == 0) {
-            Toast.makeText(this, "Quantity is already 0", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        //update Quantity TextView
+    public void decQty() {
         b.qty.setText(--qty + "");
     }
 
     /**
-     * Save data
-     * @param outState Save data on configuration changes
+     * To increase the quantity and update the result in Text View
      */
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt(Const.COUNT_VAlUE, qty);
+    public void incQty() {
+        b.qty.setText(++qty + "");
     }
 
+    /**
+     * To send the final count back to the starter activity
+     * @param view button view which is triggered
+     */
+    public void sendDataBack(View view) {
+        // Validate count
+        if (qty >= minVal && qty <= maxVal) {
+            // Send the data to the starter activity
+            Intent intent = new Intent();
+            intent.putExtra(Const.FINAL_COUNT, qty);
+            setResult(RESULT_OK, intent);
+
+            // Close the activity
+            finish();
+        }
+        // When not in range
+        else {
+            Toast.makeText(this, "Not in Range!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Instance State
+
     @Override
-    protected void onPause() {
-        super.onPause();
-        //update sharedPreference
-        sharedPreferences.edit().
-                putInt(Const.COUNT_VAlUE, qty)
-                .apply();
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(Const.COUNT, qty);
     }
 }
+
+

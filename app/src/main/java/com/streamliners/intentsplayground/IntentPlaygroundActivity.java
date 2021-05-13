@@ -8,246 +8,205 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Toast;
 
 import com.streamliners.intentsplayground.databinding.ActivityIntentPlaygroundBinding;
 
 public class IntentPlaygroundActivity extends AppCompatActivity {
-    private static final int REQUEST_COUNT = 100;
+    private static final int REQUEST_COUNT = 0;
     ActivityIntentPlaygroundBinding b;
 
-    int finalCountValue = Integer.MIN_VALUE;
-    private static final String FINAL_COUNT_VALUE = "finalCountValue";
+    // Initial setup
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Initialize binding
+
         setupLayout();
-        //Handel configuration change
-        handelConfigurationChanges(savedInstanceState);
 
-        loadSharedPreference();
-
-        //Initialize Explicit Intent
-        setupExplicitIntent();
-
-        //Initialize Implicit Intent
-        setupImplicitIntent();
-
-        //Send data
-        sendDataToMainActivity();
-
-
+        setupHideErrorForEditText();
     }
 
     /**
-     *
-     * @param savedInstanceState load data from bundle
-     */
-    private void handelConfigurationChanges(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            finalCountValue = savedInstanceState.getInt(FINAL_COUNT_VALUE);
-            if (finalCountValue != Integer.MIN_VALUE) {
-                b.finalData.setText("The final count value is " + finalCountValue);
-                b.finalData.setVisibility(View.VISIBLE);
-            }
-        }
-    }
-
-    /**
-     * Get data from sharedPreference
-     */
-    private void loadSharedPreference() {
-        SharedPreferences sharedPreferences=getPreferences(MODE_PRIVATE);
-
-        //update views
-        b.data.setText(sharedPreferences.getString(Const.DATA," "));
-        b.radioGroup.check(sharedPreferences.getInt(Const.RADIO_BUTTON_CHECK,0));
-        b.sendData.setText(sharedPreferences.getString(Const.EDT_INITIAL_COUNT_VALUE,""));
-
-    }
-
-    /**
-     * Send data to MainActivity by using explicit intent
-     */
-    private void sendDataToMainActivity() {
-        //click event
-        b.btnSend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String sendData = b.sendData.getText().toString().trim();
-
-                //Check data
-                if (sendData.isEmpty()) {
-                    b.sendData.setError("Please enter data");
-                    return;
-                }
-                //Put data in bundle
-                Bundle bundle = new Bundle();
-                bundle.putInt(Const.INITIAL_DATA, Integer.parseInt(sendData));
-                bundle.putInt(Const.MIN_VALUE, 0);
-                bundle.putInt(Const.MAX_VALUE, 100);
-
-                //Send data by using explicit intent
-                Intent intent = new Intent(IntentPlaygroundActivity.this, MainActivity.class);
-                intent.putExtras(bundle);
-                startActivityForResult(intent, REQUEST_COUNT);
-
-            }
-        });
-    }
-
-    /**
-     * Initialize Layout
+     * Setup the layout using the root element of the UI
      */
     private void setupLayout() {
         b = ActivityIntentPlaygroundBinding.inflate(getLayoutInflater());
-        setContentView(b.getRoot());
 
+        setContentView(b.getRoot());
         setTitle("Intents Playground");
     }
 
-
     /**
-     * Open MainActivity by using Explicit Intent
+     * Text watcher which gives callback when the text in the text fields changes
      */
-    private void setupExplicitIntent() {
-        //click event
-        b.sendExplicitIntent.setOnClickListener(new View.OnClickListener() {
+    private void setupHideErrorForEditText() {
+        TextWatcher myTextwatcher = new TextWatcher() {
             @Override
-            public void onClick(View v) {
-                startActivity(new Intent(IntentPlaygroundActivity.this, MainActivity.class));
-            }
-        });
-    }
-
-
-    /**
-     * Implicit Intent
-     */
-    private void setupImplicitIntent() {
-        b.sendImplicitIntent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String str = b.data.getText().toString().trim();
-
-                //Check validation of data
-                if (str.isEmpty()) {
-                    b.data.setError("Please enter data");
-                    return;
-                }
-                int id = b.radioGroup.getCheckedRadioButtonId();
-
-                if (id == R.id.open_webPage) {
-                    //To open web page
-                    openWebPage(str);
-                } else if (id == R.id.dial_no) {
-                    //To open dialer
-                    openDialer(str);
-
-                } else if (id == R.id.share_text) {
-                    //To share text
-                    openShareMenu(str);
-                } else {
-                    Toast.makeText(IntentPlaygroundActivity.this, "Please Select a option", Toast.LENGTH_SHORT).show();
-                }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
             }
-        });
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                hideError();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        };
+
+        b.data.getEditText().addTextChangedListener(myTextwatcher);
+        b.initialCounterEditText.getEditText().addTextChangedListener(myTextwatcher);
+    }
+
+    // Event Handlers
+
+    /**
+     * To open main activity and pass the count to the activity
+     * @param view view of the button pressed
+     */
+    public void openMainActivity(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     /**
-     * Open all sharing app
-     *
-     * @param text Share text to any sharing app
+     * sending implicit activity
+     * @param view view of the button pressed
      */
-    private void openShareMenu(String text) {
-        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+    public void sendImplicitIntent(View view) {
+        // get the input data and trim it
+        String input = b.data.getEditText().getText().toString().trim();
 
-        intent.setType("text/plain");
-        intent.putExtra(android.content.Intent.EXTRA_TEXT, text);
-
-        startActivity(Intent.createChooser(intent, "Share text via"));
-        //Hide the error
-        hideError();
-
-    }
-
-    /**
-     * Open the dialer
-     *
-     * @param number number to called
-     */
-    private void openDialer(String number) {
-        //Check number
-        if (!number.matches("^\\d{10}$")) {
-            b.data.setError("Please enter valid number ");
+        // Check that the input data is not empty if it is then return the function
+        if (input.isEmpty()) {
+            b.data.setError("Please enter something");
             return;
         }
-        startActivity(new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + number)));
-        hideError();
 
+        // Validate intent Type
+        int type = b.intentTypeRadioGroup.getCheckedRadioButtonId();
+
+        // Handling implicit intent cases
+        // Comparing type with radio group using their IDs
+        if (type == b.openWepageRadioButton.getId()) {
+            openWebpage(input);
+        } else if (type == b.dialNumberRadioButton.getId()) {
+            dialNumber(input);
+        } else if (type == b.shareTextRadioButton.getId()) {
+            shareText(input);
+        } else
+            Toast.makeText(this, "Please select an intent type", Toast.LENGTH_SHORT).show();
     }
 
     /**
-     * @param url which is open on Browser
+     * Sending count data to the main activity
+     * @param view view of the button pressed
      */
-    private void openWebPage(String url) {
-        //check url
-        if (!url.matches("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")) {
-            b.data.setError("Please enter valid url");
+    public void sendData(View view) {
+        // get the input data and trim it
+        String input = b.initialCounterEditText.getEditText().getText().toString().trim();
+
+        // Check that the input data is not empty if it is then return the function
+        if (input.isEmpty()) {
+            b.initialCounterEditText.setError("Please enter something");
             return;
         }
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-        hideError();
+
+        int initialCount = Integer.parseInt(input);
+
+        Bundle bundle = new Bundle();
+        bundle.putInt(Const.INITIAL_COUNT_KEY, initialCount);
+        bundle.putInt(Const.MINIMUM_VALUE, -100);
+        bundle.putInt(Const.MAXIMUM_VALUE, 100);
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtras(bundle);
+
+        startActivityForResult(intent, REQUEST_COUNT);
     }
 
-
     /**
-     * Used to hide the error showed when Text changes
-     */
-    private void hideError() {
-        b.data.setError(null);
-    }
-
-    /**
-     * @param requestCode code of the request made
-     * @param resultCode  code of the result
-     * @param data        data which is coming back in the form of result
+     *
+     * @param requestCode   code of the request made
+     * @param resultCode    code of the result
+     * @param data          data which is coming back in the form of result
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        // Checking the incoming data
         if (requestCode == REQUEST_COUNT && resultCode == RESULT_OK) {
-            finalCountValue = data.getIntExtra(Const.FINAL_DATA, 0);
-            b.finalData.setText("The final count value is " + finalCountValue);
-            b.finalData.setVisibility(View.VISIBLE);
+            int count = data.getIntExtra(Const.FINAL_COUNT, Integer.MIN_VALUE);
+
+            b.result.setText("Final count received: " + count);
+            b.result.setVisibility(View.VISIBLE);
         }
     }
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        //save data
-        outState.putInt(FINAL_COUNT_VALUE, finalCountValue);
+    // Implicit Intent Sender
+
+    /**
+     * To share text data using different application in the android device
+     * @param text data which is to be send
+     */
+    private void shareText(String text) {
+        Intent intent = new Intent(); intent.setAction(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, text);
+        startActivity(Intent.createChooser(intent, "Share text via"));
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        //update sharedPreferences
-        getPreferences(MODE_PRIVATE).edit()
-                .putString(Const.DATA, b.data.getText().toString().trim())
-                .putInt(Const.RADIO_BUTTON_CHECK, b.radioGroup.getCheckedRadioButtonId())
-                .putString(Const.EDT_INITIAL_COUNT_VALUE, b.sendData.getText().toString().trim()).apply();
+    /**
+     * Dialing number using the caller application in the device
+     * @param number number to be called
+     */
+    private void dialNumber(String number) {
+        // Check if input is 10 digit or not
+        if (!number.matches("^\\d{10}$")) {
+            b.data.setError("Invalid number!");
+            return;
+        }
+
+        Uri uri = Uri.parse("tel:" + number);
+        Intent intent = new Intent(Intent.ACTION_DIAL, uri);
+        startActivity(intent);
+
+        hideError();
+    }
+
+    /**
+     * Open web page
+     * @param url URL to be opened in the browser
+     */
+    private void openWebpage(String url) {
+        // Check if input is URL or not
+        if (!url.matches("^(https?|ftp|file)://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]")) {
+            b.data.setError("Invalid URL!");
+            return;
+        }
+
+        Uri uri = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+
+        hideError();
+    }
+
+    // Utility functions
+
+    /**
+     * Used to hide the error showed when state changes
+     */
+    private void hideError() {
+        b.data.setError(null);
+        b.initialCounterEditText.setError(null);
     }
 }
-
-
-
-
-

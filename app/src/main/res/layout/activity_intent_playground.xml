@@ -8,200 +8,184 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        tools:context=".IntentsPlaygroundActivity">
 
+        <!-- Explicit intent heading -->
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/explicit_intent_heading"
             style="@style/TextAppearance.MaterialComponents.Headline5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="@string/intent_name"
-            android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/explicit_intent_heading"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Explicit intent button -->
         <Button
-            android:id="@+id/sendExplicitIntent"
+            android:id="@+id/open_main_activity_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="@string/btn_main_activity"
-            android:textSize="16sp"
+            android:onClick="openMainActivity"
+            android:text="@string/open_main_activity_button_label"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView" />
+            app:layout_constraintTop_toBottomOf="@+id/explicit_intent_heading" />
 
+        <!-- Divider -->
         <View
-            android:id="@+id/view"
+            android:id="@+id/divider"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="2dp"
             android:layout_marginTop="16dp"
-            android:background="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sendExplicitIntent" />
+            android:background="@color/divider_color"
+            app:layout_constraintTop_toBottomOf="@id/open_main_activity_button" />
 
+        <!-- Implicit intent heading -->
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/implicit_intent_heading"
             style="@style/TextAppearance.MaterialComponents.Headline5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:text="Implicit Intent"
-            android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/implicit_intent_heading"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view" />
+            app:layout_constraintTop_toBottomOf="@id/divider" />
 
+        <!-- Data input text field -->
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textInputLayout"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:id="@+id/data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:hint="Data"
-            app:boxStrokeColor="#191818"
-            app:hintTextColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3">
+            app:layout_constraintTop_toBottomOf="@+id/implicit_intent_heading">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/data"
+                android:id="@+id/edit_text_1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:textColor="@color/black"
-                android:textCursorDrawable="@null" />
+                android:layout_height="wrap_content" />
+
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- radio group for the intent type -->
         <RadioGroup
-            android:id="@+id/radioGroup"
+            android:id="@+id/intent_type_radio_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout">
+            app:layout_constraintTop_toBottomOf="@+id/data">
 
             <RadioButton
-                android:id="@+id/open_webPage"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_width="match_parent"
+                android:id="@+id/open_wepage_radio_button"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Open Webpage"
-                android:textColor="@color/black" />
+                android:text="Open Webpage" />
 
             <RadioButton
-                android:id="@+id/dial_no"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_width="match_parent"
+                android:id="@+id/dial_number_radio_button"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dial Number"
-                android:textColor="@color/black" />
+                android:text="Dial Number" />
 
             <RadioButton
-                android:id="@+id/share_text"
-                style="@style/TextAppearance.AppCompat.Medium"
-                android:layout_width="match_parent"
+                android:id="@+id/share_text_radio_button"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Share Text"
-                android:textColor="@color/black" />
+                android:text="Share Text" />
         </RadioGroup>
 
+        <!-- implicit intent button -->
         <Button
-            android:id="@+id/sendImplicitIntent"
-            android:layout_width="60dp"
+            android:id="@+id/send_implicit_intent_button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:onClick="sendImplicitIntent"
             android:text="GO"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+            app:layout_constraintTop_toBottomOf="@+id/intent_type_radio_group" />
 
+        <!-- Divider -->
         <View
-            android:id="@+id/view2"
+            android:id="@+id/divider2"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="2dp"
             android:layout_marginTop="16dp"
-            android:background="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sendImplicitIntent" />
+            android:background="@color/divider_color"
+            app:layout_constraintTop_toBottomOf="@id/send_implicit_intent_button" />
 
+        <!-- Send and receive data heading -->
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/send_data_heading"
             style="@style/TextAppearance.MaterialComponents.Headline5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:text="Sending &amp; Receiving Data"
-            android:textColor="@color/black"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:text="sending and receiving data"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view2" />
+            app:layout_constraintTop_toBottomOf="@id/divider2" />
 
+        <!-- Initial count input text field -->
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textInputLayout2"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:id="@+id/initialCounterEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            android:hint="Initial Count"
-            app:boxStrokeColor="#191818"
-            app:hintTextColor="@color/black"
+            android:hint="Data"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btn_send"
+            app:layout_constraintEnd_toStartOf="@+id/send_data_button"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4">
+            app:layout_constraintTop_toBottomOf="@+id/send_data_heading">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/send_data"
+                android:id="@+id/edit_text_2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:maxLength="3"
-                android:textColor="@color/black"
-                android:textCursorDrawable="@null" />
+                android:inputType="number"/>
+
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- send count button -->
         <Button
-            android:id="@+id/btn_send"
+            android:id="@+id/send_data_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="SEND"
-            app:layout_constraintBaseline_toBaselineOf="@+id/textInputLayout2"
+            android:onClick="sendData"
+            android:text="send"
+            app:layout_constraintBottom_toBottomOf="@+id/initialCounterEditText"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/textInputLayout2" />
+            app:layout_constraintTop_toTopOf="@+id/initialCounterEditText" />
 
+        <!-- showing the result which is coming from the result activity generated which is initially gone -->
         <TextView
-            android:id="@+id/finalData"
-            style="@style/TextAppearance.AppCompat.Body1"
-            android:layout_width="0dp"
+            android:id="@+id/result"
+            style="@style/TextAppearance.MaterialComponents.Body1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:gravity="center"
             android:text="TextView"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout2" />
+            app:layout_constraintTop_toBottomOf="@+id/initialCounterEditText" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </ScrollView>
