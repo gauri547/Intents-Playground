@@ -11,6 +11,13 @@ This app open web page, dialer and share text by using implicit intent. And send
 
 ![image](https://user-images.githubusercontent.com/81371138/116871608-2429e600-ac32-11eb-91c6-9b6d43eeb671.png)
 
+![image](https://user-images.githubusercontent.com/81371138/118234501-06ba0f00-b4b1-11eb-84b2-92e0445f9c15.png)
+
+![image](https://user-images.githubusercontent.com/81371138/118234520-0e79b380-b4b1-11eb-9c8c-1a4144d7757e.png)
+
+![image](https://user-images.githubusercontent.com/81371138/118234544-189bb200-b4b1-11eb-90ef-10e345c033d4.png)
+
+
 
 ## APK
 
